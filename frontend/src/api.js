@@ -419,6 +419,7 @@ Meal Variety Requirements:
 Recommend ONLY traditional or modern popular Indian recipes.
 Ensure that the ingredients include estimated individual ingredient costs in INR (₹) that sum up logically to a realistic total cost.
 Specify ingredient quantities in common consumer-friendly retail sizes: grams (g), milliliters (ml), or pieces (pcs) rather than large fractional units (like 0.1 kg or 0.05 L). For example, use '150 g' instead of '0.15 kg' and '200 ml' instead of '0.2 L'.
+Keep recipe descriptions extremely short (maximum 1 sentence) and cooking instructions very concise (maximum 2 short sentences) to prevent response truncation.
 
 You MUST respond ONLY with a valid JSON object matching the following structure:
 {
@@ -468,7 +469,7 @@ Do not include any other markdown text except the raw JSON string.`;
             ],
             temperature: 0.5,
             response_format: { type: "json_object" },
-            max_tokens: 4000
+            max_tokens: 8000
           })
         });
 
