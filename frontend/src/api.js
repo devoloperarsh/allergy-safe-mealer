@@ -1,4 +1,4 @@
-const OPENAI_KEY = "";
+const OPENAI_KEY = import.meta.env.VITE_OPENAI_API_KEY || "";
 const MODEL_NAME = "gpt-4o-mini";
 
 // Helper for local profile loading
