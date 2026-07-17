@@ -466,7 +466,9 @@ Do not include any other markdown text except the raw JSON string.`;
               { role: "system", content: "You output raw structured JSON data for an Indian meal planner." },
               { role: "user", content: prompt }
             ],
-            temperature: 0.7
+            temperature: 0.5,
+            response_format: { type: "json_object" },
+            max_tokens: 4000
           })
         });
 
