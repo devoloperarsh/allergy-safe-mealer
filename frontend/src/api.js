@@ -455,6 +455,84 @@ You MUST respond ONLY with a valid JSON object matching the following structure:
 Do not include any other markdown text except the raw JSON string.`;
 
       try {
+        const schema = {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            total_cost: { type: "number" },
+            meals: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  day: { type: "string" },
+                  breakfast: { $ref: "#/$defs/recipe" },
+                  lunch: { $ref: "#/$defs/recipe" },
+                  dinner: { $ref: "#/$defs/recipe" }
+                },
+                required: ["day", "breakfast", "lunch", "dinner"],
+                additionalProperties: false
+              }
+            },
+            message: { type: "string" }
+          },
+          required: ["success", "total_cost", "meals", "message"],
+          additionalProperties: false,
+          $defs: {
+            recipe: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                description: { type: "string" },
+                category: { type: "string" },
+                prep_time: { type: "integer" },
+                instructions: { type: "string" },
+                calories: { type: "integer" },
+                protein: { type: "integer" },
+                carbs: { type: "integer" },
+                fat: { type: "integer" },
+                allergens: { type: "string" },
+                ingredients: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      ingredient: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          cost_per_unit: { type: "number" },
+                          unit: { type: "string" },
+                          allergens: { type: "string" }
+                        },
+                        required: ["name", "cost_per_unit", "unit", "allergens"],
+                        additionalProperties: false
+                      },
+                      quantity: { type: "number" }
+                },
+                    required: ["ingredient", "quantity"],
+                    additionalProperties: false
+                  }
+                }
+              },
+              required: [
+                "title",
+                "description",
+                "category",
+                "prep_time",
+                "instructions",
+                "calories",
+                "protein",
+                "carbs",
+                "fat",
+                "allergens",
+                "ingredients"
+              ],
+              additionalProperties: false
+            }
+          }
+        };
+
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -464,11 +542,18 @@ Do not include any other markdown text except the raw JSON string.`;
           body: JSON.stringify({
             model: MODEL_NAME,
             messages: [
-              { role: "system", content: "You output raw structured JSON data for an Indian meal planner." },
+              { role: "system", content: "You output structured JSON data for an Indian meal planner." },
               { role: "user", content: prompt }
             ],
-            temperature: 0.5,
-            response_format: { type: "json_object" },
+            temperature: 0.3,
+            response_format: { 
+              type: "json_schema", 
+              json_schema: {
+                name: "meal_plan_schema",
+                strict: true,
+                schema: schema
+              }
+            },
             max_tokens: 8000
           })
         });
